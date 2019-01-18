@@ -20,6 +20,11 @@ node {
       cleanWs()
       git 'https://github.com/rfontans/iib-projects.git'   
       fileOperations([folderDeleteOperation(folderPath: '.git'), fileDeleteOperation(includes: '*')])
+      fileOperations([
+         folderDeleteOperation(folderPath: '.git'),
+         folderDeleteOperation(folderPath: '.gitignore'),
+         fileDeleteOperation(includes: '*')
+         ])
    }
 
    /*
