@@ -1,14 +1,40 @@
-/*
-* Jenkinsfile (Declarative Pipeline)
-*/
-
-pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                bat 'set'
-            }
-        }
-    }
+node {
+   
+   parameters {
+      choice(name: 'DEPLOY_ENV', choices: ['DEV', 'HOM'], description: 'Target environment')
+      string(name: 'ARTIFACT_ID', defaultValue: 'iib-maven-plugin-poc', description: 'Maven artifactId')
+   }
+   
+   stage('Workspace') {
+      cleanWs()
+      bat("echo C:\\Users\\rfontans\\IBM\\IIBT10\\workspace\\${ARTIFACT_ID} ___ ${WORKSPACE}\\${ARTIFACT_ID}")
+      folderCopyOperation(sourceFolderPath: "C:\\Users\\rfontans\\IBM\\IIBT10\\workspace\\${ARTIFACT_ID}", destinationFolderPath: "${WORKSPACE}\\${ARTIFACT_ID}\\")
+//      bat("xcopy C:\\Users\\rfontans\\IBM\\IIBT10\\workspace\\${ARTIFACT_ID} ${WORKSPACE}\\${ARTIFACT_ID}\\ /E /F")
+   }
+   
+   stage('Environment') {
+      env.MAVEN_HOME = tool 'M3'
+      env.JAVA_HOME = tool 'IIB JDK'
+      env.MQSI_BASE_FILEPATH = "C:\\Program Files\\IBM\\IIB\\10.0.0.15"
+      env.PATH = "$MAVEN_HOME\\bin;$MQSI_BASE_FILEPATH;$MQSI_BASE_FILEPATH\\tools;$MQSI_BASE_FILEPATH\\server\\bin;$PATH";
+      def pom = readMavenPom file: "${ARTIFACT_ID}\\pom.xml"
+      env.POM_ARTIFACT_ID = pom.artifactId
+      env.POM_VERSION = pom.version
+      bat(/set/)
+   }
+   
+   stage('Build') {
+       bat(/mvn -f ${WORKSPACE}\${POM_ARTIFACT_ID}\pom.xml -Dmaven.test.failure.ignore clean package/)
+   }
+   
+   stage('Archive'){
+       bat(/echo 'Archive Step'/)
+       archiveArtifacts artifacts: '${WORKSPACE}\\${POM_ARTIFACT_ID}\\target\\iib\\*.bar', onlyIfSuccessful: true
+   }
+   
+   stage('Deploy') {
+       bat(/mqsiprofile && mqsideploy TESTNODE_rfontans -e default -a ${WORKSPACE}\${POM_ARTIFACT_ID}\target\iib\${DEPLOY_ENV}_${POM_VERSION}.bar -w 120 -v deploy-trace.log/)
+       bat(/mqsiprofile && mqsistopmsgflow TESTNODE_rfontans -e default -w 30 -f restartExecutionGroup/)
+       bat(/mqsiprofile && mqsilist TESTNODE_rfontans/)
+   }
 }
