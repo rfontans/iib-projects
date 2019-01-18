@@ -33,7 +33,7 @@
  					<configPropFileDirectory>${project.basedir}</configPropFileDirectory>
 					<defaultPropertiesFile>${project.build.directory}\iib\default.properties</defaultPropertiesFile>
 					<failOnInvalidProperties>true</failOnInvalidProperties>
-					<debugWorkspace>false</debugWorkspace>
+					<debugWorkspace>true</debugWorkspace>
 				</properties>		
 			</profile>	
 		</profiles>
