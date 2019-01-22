@@ -1,13 +1,15 @@
 node {
-   
+   /*
    properties([
     parameters([
     choice(name: 'COMPONENT_NAME', choices: ['iib-maven-plugin-poc'], description: 'IIB10 Component Name'),
     choice(name: 'TARGET_ENV', choices: ['dev', 'hom', 'prd'], description: 'Target environment')
     ])
    ])
+   */
    
    stage('Environment') {
+      env.COMPONENT_NAME = "iib-maven-plugin-poc"
       env.JAVA_HOME = tool 'IIB JDK'
       env.MQSI_BASE_FILEPATH = "C:\\Program Files\\IBM\\IIB\\10.0.0.15"
       env.PATH = "$MQSI_BASE_FILEPATH;$MQSI_BASE_FILEPATH\\tools;$MQSI_BASE_FILEPATH\\server\\bin;$PATH";
