@@ -1,12 +1,4 @@
 node {
-   /*
-   properties([
-    parameters([
-    choice(name: 'COMPONENT_NAME', choices: ['iib-maven-plugin-poc'], description: 'IIB10 Component Name'),
-    choice(name: 'TARGET_ENV', choices: ['dev', 'hom', 'prd'], description: 'Target environment')
-    ])
-   ])
-   */
    
    stage('Environment') {
       env.COMPONENT_NAME = "iib-maven-plugin-poc"
@@ -14,8 +6,7 @@ node {
       env.MQSI_BASE_FILEPATH = "C:\\Program Files\\IBM\\IIB\\10.0.0.15"
       env.PATH = "$MQSI_BASE_FILEPATH;$MQSI_BASE_FILEPATH\\tools;$MQSI_BASE_FILEPATH\\server\\bin;$PATH";
    }
-
-   
+  
    def COMPONENT_BASE_DIR = "${WORKSPACE}\\${COMPONENT_NAME}"
    
    stage('Checkout') {
@@ -39,13 +30,4 @@ node {
        archiveArtifacts artifacts: "${COMPONENT_NAME}\\target\\iib\\*.bar", onlyIfSuccessful: true, fingerprint: true
    }
 
-   /* 
-   input 'Deploy?'
-   stage('Deploy') {
-       def IIB_NODE = 'TESTNODE_rfontans'
-       bat(/mqsiprofile && mqsideploy ${IIB_NODE} -e default -a ${COMPONENT_BASE_DIR}\target\iib\${COMPONENT_NAME}_${POM_VERSION}_${TARGET_ENV}.bar -w 120 -v deploy-trace.log/)
-       bat(/mqsiprofile && mqsistopmsgflow ${IIB_NODE} -e default -w 30 -f restartExecutionGroup/)
-       bat(/mqsiprofile && mqsilist ${IIB_NODE}/)
-   }
-   */
 }
