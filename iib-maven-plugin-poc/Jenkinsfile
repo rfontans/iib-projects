@@ -36,7 +36,7 @@ node {
    }
    
    stage('Archive'){
-       archiveArtifacts artifacts: "${COMPONENT_NAME}\\target\\iib\\*.bar", onlyIfSuccessful: true
+       archiveArtifacts artifacts: "${COMPONENT_NAME}\\target\\iib\\*.bar", onlyIfSuccessful: true, fingerprint: true
    }
 
    /* 
