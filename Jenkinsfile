@@ -1,7 +1,7 @@
 node {
    
    stage('Environment') {
-      env.COMPONENT_NAME = '${JOB_NAME}'
+      env.COMPONENT_NAME = "${JOB_NAME}"
       env.JAVA_HOME = tool 'IIB JDK'
       env.MQSI_BASE_FILEPATH = "C:\\Program Files\\IBM\\IIB\\10.0.0.15"
       env.PATH = "$MQSI_BASE_FILEPATH;$MQSI_BASE_FILEPATH\\tools;$MQSI_BASE_FILEPATH\\server\\bin;$PATH";
